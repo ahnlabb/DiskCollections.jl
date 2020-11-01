@@ -1,0 +1,13 @@
+name = "DiskCollections"
+uuid = "5dc218a2-50e6-48ce-82bf-e5f7008f86a6"
+authors = ["Johannes Ahnlide <johannes@voxel.se> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
