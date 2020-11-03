@@ -14,7 +14,9 @@ jobs:
           - 'nightly'
         os:
           - ubuntu-latest
-          - macOS-latest
+          # - macOS-latest
+          # Disabled temporarily because of error
+          # EACCES: permission denied, unlink 'julia-x64-nightly-WmgOjZ/julia/LICENSE.md'
           - windows-latest
         arch:
           - x64
