@@ -51,7 +51,7 @@ jobs:
             Pkg.instantiate()'
       - run: |
           julia --project=docs -e '
-            using Documenter: doctest
+            using Documenter: doctest, DocMeta
             using DiskCollections
             DocMeta.setdocmeta!(DiskCollections, :DocTestSetup, :(using DiskCollections); recursive=true)
             doctest(DiskCollections)'
