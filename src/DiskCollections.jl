@@ -47,7 +47,7 @@ provided as the first argument, enabling the use of Do-Block Syntax just as for
 
 ```jldoctest
 julia> new_disk_dict = DiskDict(open("mydict.jlp","w+"), 1000)
-DiskDict{Any,Any} with 0 entries
+DiskDict{Any,Any}()
 
 julia> new_disk_dict["name"] = "DiskCollections"
 "DiskCollections"
