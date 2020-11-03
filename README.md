@@ -14,7 +14,7 @@ module.
 At the moment, this package provides two types: `DiskDict` and `LoggingDict`.
 They both use an in-memory dict for reads but write data to disk when a value is
 stored or deleted. `LoggingDict` writes all dictionary updates linearly
-to the disk so the size of the file grow linearly with the number of updates but
+to the disk so the size of the file grows linearly with the number of updates but
 the performance of updates remains high even for very large dictionaries.
 `DiskDict` writes updates to disk in a similar way but after a certain number of
 updates (chosen by the user) it completely reserializes the dictionary so the

@@ -29,6 +29,38 @@ function init_dict(K,V,io)
     s, dict
 end
 
+"""
+    DiskDict{K,V}(io::IO, n::Int; buffered_checkpoint=true)
+    DiskDict{K,V}(filename::String, n::Int; buffered_checkpoint=true)
+    DiskDict{K,V}(f::Function, filename::String, n::Int; buffered_checkpoint=true)
+
+Constructs a persistent dictionary behaving like a `Dict{K,V}` that serializes
+keys and values to the seekable IO `io`. If a filename is provided instead that
+file is opened with `read`, `write`, and `create` set to `true`. Every `n`
+updates the dictionary reserializes its current state. If `buffered_checkpoint`
+is `true`, this reserialization is performed in memory before writing the data
+to the io.
+
+Because the constructor opens a file that should be closed a function can be
+provided as the first argument, enabling the use of Do-Block Syntax just as for
+`open`.
+
+```jldoctest
+julia> new_disk_dict = DiskDict(open("mydict.jlp","w+"), 1000)
+DiskDict{Any,Any} with 0 entries
+
+julia> new_disk_dict["name"] = "DiskCollections"
+"DiskCollections"
+
+julia> close(new_disk_dict)
+
+julia> plain_dict = DiskDict("mydict.jlp", 1000) do disk_dict
+           Dict(disk_dict)
+       end
+Dict{Any,Any} with 1 entry:
+  "name" => "DiskCollections"
+```
+"""
 function DiskDict{K,V}(io::IO, n::Int; buffered_checkpoint=true) where {K,V}
     s, cache = init_dict(K,V,io)
     counter = 0
@@ -135,7 +167,45 @@ mutable struct LoggingDict{K,V} <: AbstractDiskDict{K,V}
     log_start::Int
 end
 
-function LoggingDict{K,V}(io::IO; until=nothing) where {K,V}
+"""
+    LoggingDict{K,V}(io::IO; until::Union{DateTime,Nothing}=nothing)
+    LoggingDict{K,V}(filename::String; until::Union{DateTime,Nothing}=nothing)
+    LoggingDict{K,V}(f::Function, filename::String; until::Union{DateTime,Nothing}=nothing)
+
+Constructs a persistent dictionary behaving like a `Dict{K,V}` that serializes
+keys and values to the seekable IO `io`. If a filename is provided instead that
+file is opened with `read`, `write`, and `create` set to `true`. For each update
+the `LoggingDict` stores the time; by providing a `DateTime` for the `until`
+parameter of the `LoggingDict` constructor the updates are loaded from the file
+up until that point in time.
+
+Because the constructor opens a file that should be closed a function can be
+provided as the first argument, enabling the use of Do-Block Syntax just as for
+[`open`](@ref).
+
+```jldoctest
+julia> using Dates
+
+julia> LoggingDict{Int,String}("mylogdict.jlp") do logdict
+           for i in 1:5
+               logdict[i] = string(i)
+           end
+           sleep(10)
+           for i in 6:10
+               logdict[i] = string(i)
+           end
+       end
+
+julia> LoggingDict{Int,String}("mylogdict.jlp", until=now()-Second(10))
+LoggingDict{Int64,String} with 5 entries:
+  4 => "4"
+  2 => "2"
+  3 => "3"
+  5 => "5"
+  1 => "1"
+```
+"""
+function LoggingDict{K,V}(io::IO; until::Union{DateTime,Nothing}=nothing) where {K,V}
     s, cache = init_dict(K,V,io)
     log_start = position(io)
     while !eof(io)

@@ -1,6 +1,7 @@
 using DiskCollections
 using Documenter
 
+DocMeta.setdocmeta!(DiskCollections, :DocTestSetup, :(using DiskCollections); recursive=true)
 makedocs(;
     modules=[DiskCollections],
     authors="Johannes Ahnlide <johannes@voxel.se> and contributors",

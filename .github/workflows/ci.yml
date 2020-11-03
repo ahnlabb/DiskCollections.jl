@@ -53,6 +53,7 @@ jobs:
           julia --project=docs -e '
             using Documenter: doctest
             using DiskCollections
+            DocMeta.setdocmeta!(DiskCollections, :DocTestSetup, :(using DiskCollections); recursive=true)
             doctest(DiskCollections)'
       - run: julia --project=docs docs/make.jl
         env:

@@ -1,5 +1,8 @@
 ```@meta
 CurrentModule = DiskCollections
+DocTestSetup = quote
+    using DiskCollections
+end
 ```
 
 # DiskCollections
